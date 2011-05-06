@@ -115,7 +115,7 @@ will produce:
 	user_preamble = (file = @doc.attributes[:latex_preamble]) ?
 		"\\input{#{file}}\n" : ""
 		
-"\\documentclass{article}
+"\\documentclass[a4paper, 12pt]{article}
 
 % Packages required to support encoding
 #{encoding}
@@ -128,6 +128,9 @@ will produce:
 \\usepackage{xspace}
 \\usepackage[usenames,dvipsnames]{color}
 \\hypersetup{colorlinks=true,urlcolor=blue}
+
+\\renewcommand{\\familydefault}{\\sfdefault}
+\\usepackage{fullpage}
 
 #{user_preamble}
 
@@ -411,6 +414,27 @@ Otherwise, a standard `verbatim` environment is used.
 			end
 		end
 		
+	end
+	
+	# render inline graphic
+	def to_latex_im_image
+	  if not url = self.url
+	    maruku_error "Image with no url: #{self.inspect}"
+	    tell_user "Could not create image with ref_id = #{id.inspect}"
+    end
+		@doc.latex_require_package('float')
+		@doc.latex_require_package('graphicx')
+    return "\\raisebox{0mm}{\\includegraphics[scale=0.75]{#{url}}}"	
+    
+    # \newcommand{\image}[3][\textwidth]{%
+    #   \begin{figure}[H]%
+    #     \centering%
+    #     \ifthenelse{\isempty{#3}}%
+    #       {\setlength\fboxsep{0pt}\fbox{\includegraphics[width={#1}]{#2}}}%
+    #       {\includegraphics[width={#1}]{#2}}%
+    #     \label{fig:{#2}}%
+    #   \end{figure}
+    # }
 	end
 	
 	def to_latex_email_address
