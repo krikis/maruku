@@ -118,7 +118,7 @@ will produce:
     "\\author{#{au}}\n" : ""
   date = "\\date{}\n"
   maketitle = (ti.empty? and au.empty?) ? 
-    "" : "\\maketitle\n"
+    "" : "\\maketitle\n\\thispagestyle{empty}\n"
 	user_preamble = (file = @doc.attributes[:latex_preamble]) ?
 		"\\input{#{file}}\n" : ""
 		
