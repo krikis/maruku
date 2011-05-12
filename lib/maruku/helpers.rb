@@ -116,6 +116,10 @@ module Helpers
 		md_el(:im_image, children, {:url=>url,:title=>title},al)
 	end
 
+	def md_inline_image(children, url, title=nil, al=nil)
+		md_el(:inline_image, children, {:url=>url,:title=>title},al)
+	end
+
 	def md_em(children, al=nil)
 		md_el(:emphasis, [children].flatten, {}, al)
 	end
@@ -218,6 +222,11 @@ class MDElement
 				children_inspect, 
 				self.ref_id.inspect]
 		when :im_image
+			"md_im_image(%s, %s, %s)" % [
+				children_inspect, 
+				self.url.inspect,
+				self.title.inspect]
+		when :inline_image
 			"md_im_image(%s, %s, %s)" % [
 				children_inspect, 
 				self.url.inspect,

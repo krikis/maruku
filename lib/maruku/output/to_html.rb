@@ -795,6 +795,20 @@ of the form `#ff00ff`.
 		return a
 	end
 
+  def to_html_inline_image
+  	if not url = self.url
+  		maruku_error "Image with no url: #{self.inspect}"
+  		tell_user "Could not create image with ref_id = #{id.inspect};"+
+  			" Using SPAN element as replacement."
+  		return wrap_as_element('span')
+  	end
+  	title = self.title
+  	a =  create_html_element 'img'
+  		a.attributes['src'] = url.to_s
+  		a.attributes['alt'] = children_to_s 
+  	return a
+  end
+
 =begin maruku_doc
 Attribute: filter_html
 Scope: document

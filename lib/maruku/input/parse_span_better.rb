@@ -657,7 +657,11 @@ module MaRuKu; module In; module Markdown; module SpanLevelParser
 				error( ("Unclosed link: '"<<closing<<"'")+
 					" Read url=#{url.inspect} title=#{title.inspect}",src,con)
 			end
-			con.push_element md_im_image(alt_text, url, title)
+    	unless src.next_char # image on its own line
+			  con.push_element md_im_image(alt_text, url, title)
+			else # inline image
+			  con.push_element md_inline_image(alt_text, url, title)
+		  end
 		when ?[ # link ref
 			ref_id = read_ref_id(src,con)
 			if not ref_id # TODO: check around

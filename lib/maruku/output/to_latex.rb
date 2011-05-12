@@ -112,6 +112,13 @@ will produce:
 	...
 
 =end
+  title = (ti = @doc.attributes[:title]) ? 
+    "\\title{#{ti}}\n" : ""
+  author = (au = @doc.attributes[:author]) ? 
+    "\\author{#{au}}\n" : ""
+  date = "\\date{}\n"
+  maketitle = (ti.empty? and au.empty?) ? 
+    "" : "\\maketitle\n"
 	user_preamble = (file = @doc.attributes[:latex_preamble]) ?
 		"\\input{#{file}}\n" : ""
 		
@@ -134,7 +141,12 @@ will produce:
 
 #{user_preamble}
 
+#{title}
+#{author}
+#{date}
+
 \\begin{document} 
+#{maketitle}
 #{body}
 \\end{document}
 "	
@@ -297,13 +309,15 @@ Otherwise, a standard `verbatim` environment is used.
 			title = number + title
 		end
 		
-		if id = self.attributes[:id]
+		out = if id = self.attributes[:id]
 			# drop '#' at the beginning
 			if id[0,1] == '#' then id = [1,id.size] end
 			%{\\hypertarget{%s}{}\\%s*{{%s}}\\label{%s}\n\n} % [ id, h, title, id ]
 		else
 			%{\\%s*{%s}\n\n} % [ h, title]
 		end
+		out = "\\newpage" + out if self.level <= 2
+		out
 	end
 	
 	
@@ -416,7 +430,7 @@ Otherwise, a standard `verbatim` environment is used.
 		
 	end
 	
-	# render inline graphic
+	# render graphic
 	def to_latex_im_image
 	  if not url = self.url
 	    maruku_error "Image with no url: #{self.inspect}"
@@ -424,17 +438,23 @@ Otherwise, a standard `verbatim` environment is used.
     end
 		@doc.latex_require_package('float')
 		@doc.latex_require_package('graphicx')
-    return "\\raisebox{0mm}{\\includegraphics[scale=0.75]{#{url}}}"	
-    
-    # \newcommand{\image}[3][\textwidth]{%
-    #   \begin{figure}[H]%
-    #     \centering%
-    #     \ifthenelse{\isempty{#3}}%
-    #       {\setlength\fboxsep{0pt}\fbox{\includegraphics[width={#1}]{#2}}}%
-    #       {\includegraphics[width={#1}]{#2}}%
-    #     \label{fig:{#2}}%
-    #   \end{figure}
-    # }
+		image =   "\\begin{figure}[H]
+  \\centering
+  \\setlength\\fboxsep{0pt}\\fbox{\\includegraphics[width={\\textwidth}]{#{url}}}
+  \\label{fig:{#{url}}}
+\\end{figure}"
+    return image
+	end
+
+	# render inline graphic
+	def to_latex_inline_image
+	  if not url = self.url
+	    maruku_error "Image with no url: #{self.inspect}"
+	    tell_user "Could not create image with ref_id = #{id.inspect}"
+    end
+		@doc.latex_require_package('float')
+		@doc.latex_require_package('graphicx')
+    return "\\raisebox{0mm}{\\includegraphics[height=10pt]{#{url}}}"
 	end
 	
 	def to_latex_email_address
