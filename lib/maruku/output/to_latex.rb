@@ -440,7 +440,7 @@ Otherwise, a standard `verbatim` environment is used.
 		@doc.latex_require_package('graphicx')
 		image =   "\\begin{figure}[H]
   \\centering
-  \\setlength\\fboxsep{0pt}\\fbox{\\includegraphics[width={\\textwidth}]{#{url}}}
+  \\includegraphics[width={\\textwidth}]{#{url}}
   \\label{fig:{#{url}}}
 \\end{figure}"
     return image
