@@ -317,6 +317,7 @@ Otherwise, a standard `verbatim` environment is used.
 			%{\\%s*{%s}\n\n} % [ h, title]
 		end
 		out = "\\newpage" + out if self.level <= 2
+		out += "~\\\\\n" if self.level >= 4
 		out
 	end
 	
